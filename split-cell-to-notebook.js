@@ -1,24 +1,25 @@
-define(['base/js/namespace', 'base/js/utils', 'jquery'], function(IPython, utils, $) {
+define(['base/js/namespace', 'base/js/utils', 'jquery'], function(Jupyter, utils, $) {
     function split_cell_to_notebook() {
-        var selected_cell = IPython.notebook.get_selected_cell();
+        var selected_cell = Jupyter.notebook.get_selected_cell();
         var content_before_cursor = selected_cell.get_pre_cursor();
         var content_after_cursor = selected_cell.get_post_cursor();
-        var kernel_name = Jupyter.notebook.kernel.name;
 
-        console.log(content_before_cursor);
-        console.log(content_after_cursor);
-
-        Jupyter.notebook.contents.new_untitled('.', {
-            ext: '.ipynb',
-            type: 'notebook'
-        }).then(function(data) {
-            var url = utils.url_path_join(Jupyter.notebook.base_url, 'notebooks',
-                utils.encode_uri_components(data.path)) + 
-                "?kernel_name=" + kernel_name;
-            window.open(url, Jupyter._target);
+        var nb_path = Jupyter.notebook.notebook_path;
+        var parent_path = utils.url_path_split(nb_path)[0];
+        
+        Jupyter.notebook.contents.copy(nb_path, parent_path).then(function(data) {
+            Jupyter.notebook.contents.get(data.path, {type: 'notebook'}).then(function(data) {
+                Jupyter.notebook.fromJSON(data);
+                var copy_selected_cell = Jupyter.notebook.get_selected_cell();
+                copy_selected_cell.set_text(content_after_cursor);
+            });
         });
-
-        selected_cell.set_text(content_before_cursor);
+        
+        Jupyter.notebook.contents.get(nb_path, {type: 'notebook'}).then(function(data) {
+            Jupyter.notebook.fromJSON(data);
+            var original_selected_cell = Jupyter.notebook.get_selected_cell();
+            original_selected_cell.set_text(content_before_cursor);
+        });
     }
 
     function place_split_button() {
