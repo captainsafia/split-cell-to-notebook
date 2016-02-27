@@ -18,6 +18,7 @@ $([Jupyter.events]).on("app_initialized.NotebookApp", function() {
     Jupyter.load_extensions("split-cell-to-notebook");
 });
 ```
-7. Run `jupyter notebook` at the command line and enjoy your new feature!
+
+And that's it! Run `jupyter notebook` at the command line and enjoy your new feature!
 
 ## Usage Screencast
