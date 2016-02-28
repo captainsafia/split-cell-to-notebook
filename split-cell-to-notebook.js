@@ -11,14 +11,16 @@ define(['base/js/namespace', 'base/js/utils', 'jquery'], function(Jupyter, utils
             Jupyter.notebook.contents.get(data.path, {type: 'notebook'}).then(function(data) {
                 Jupyter.notebook.fromJSON(data);
                 var copy_selected_cell = Jupyter.notebook.get_selected_cell();
-                copy_selected_cell.set_text(content_after_cursor);
+                copy_selected_cell.set_text(content_before_cursor);
             });
         });
-        
-        Jupyter.notebook.contents.get(nb_path, {type: 'notebook'}).then(function(data) {
-            Jupyter.notebook.fromJSON(data);
-            var original_selected_cell = Jupyter.notebook.get_selected_cell();
-            original_selected_cell.set_text(content_before_cursor);
+
+        Jupyter.notebook.contents.copy(nb_path, parent_path).then(function(data) {
+            Jupyter.notebook.contents.get(data.path, {type: 'notebook'}).then(function(data) {
+                Jupyter.notebook.fromJSON(data);
+                var original_selected_cell = Jupyter.notebook.get_selected_cell();
+                original_selected_cell.set_text(content_after_cursor);
+            });
         });
     }
 
