@@ -12,6 +12,11 @@ define(['base/js/namespace', 'base/js/utils', 'jquery'], function(Jupyter, utils
                 Jupyter.notebook.fromJSON(data);
                 var copy_selected_cell = Jupyter.notebook.get_selected_cell();
                 copy_selected_cell.set_text(content_before_cursor);
+                console.log(copy_selected_cell.get_text());
+                Jupyter.notebook.save_notebook().then(function() {
+                    console.log(Jupyter.notebook);
+                    console.log('Notebook saved!');
+                });
             });
         });
 
@@ -20,6 +25,11 @@ define(['base/js/namespace', 'base/js/utils', 'jquery'], function(Jupyter, utils
                 Jupyter.notebook.fromJSON(data);
                 var original_selected_cell = Jupyter.notebook.get_selected_cell();
                 original_selected_cell.set_text(content_after_cursor);
+                console.log(original_selected_cell.get_text());
+                Jupyter.notebook.save_notebook().then(function() {
+                    console.log(Jupyter.notebook);
+                    console.log('Notebook saved!');
+                });
             });
         });
     }
