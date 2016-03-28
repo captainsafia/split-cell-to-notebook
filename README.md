@@ -7,3 +7,6 @@ extension!
 1. Run `jupyter --config-dir` to determine the location of your Jupyter Notebook configuration
 2. Download `split-cell-to-notebook.js` and copy it to `$(jupyter --config-dir)/nbextensions`.
 3. Run `jupyter nbextension enable split-cell-to-notebook`.
+
+### Usage Screencast
+![Usage Screencast](split-cell-to-notebook-screencast.gif)
