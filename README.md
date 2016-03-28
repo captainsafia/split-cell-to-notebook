@@ -1,24 +1,9 @@
 # split-cell-to-notebook
-A Jupyter Notebook extension for splitting a cell into two notebooks. Although,
-@captainsafia made this extension, it would not have been possible without the
-project's PokeMon sponsor, Cinccino.
+split-cell-to-notebook is a Jupyter Notebook extension for splitting a single (long)
+cell into two new Notebooks. Many thanks to @jcb91 for doing most of the leg work on this
+extension!
 
-![Cinccino](http://randompokemon.com/sprites/animated/573.gif)
-
-## Installation
-
-1. Run `ipython locate` to determine the location of your Jupyter Notebook configuration.
-2. Download `split-cell-to-notebook.js` and copy it to `$(ipython locate)/nbextensions`.
-3. Create a new folder called `static` inside `$(ipython locate)/profile_default`.
-4. Create a new folder inside `static` called `custom`.
-5. Create a new file inside custom titled `custom.js`.
-6. Place the following inside `custom.js`
-```
-$([Jupyter.events]).on("app_initialized.NotebookApp", function() {
-    Jupyter.load_extensions("split-cell-to-notebook");
-});
-```
-
-And that's it! Run `jupyter notebook` at the command line and enjoy your new feature!
-
-## Usage Screencast
+### Installation Instructions
+1. Run `jupyter --config-dir` to determine the location of your Jupyter Notebook configuration
+2. Download `split-cell-to-notebook.js` and copy it to `$(jupyter --config-dir)/nbextensions`.
+3. Run `jupyter nbextension enable split-cell-to-notebook`.
