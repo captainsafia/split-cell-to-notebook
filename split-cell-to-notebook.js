@@ -1,37 +1,41 @@
 define(['base/js/namespace', 'base/js/utils', 'jquery'], function(Jupyter, utils, $) {
+
+    function copy_and_swap_content (nb_path, parent_path, content) {
+        return Jupyter.notebook.contents.copy(nb_path, parent_path).then(function (data) {
+            // save edited content to the newly-provided copy path
+            return Jupyter.notebook.contents.save(
+                data.path, {type: 'notebook', content: content}
+            ).then(function (data) {
+                var url = utils.url_path_join(
+                    Jupyter.notebook.base_url, 'notebooks', utils.encode_uri_components(data.path)
+                );
+                // // maybe do something with the new url - open it, or notify user?
+                // // Nothing for now, as opening it looks like a popup
+                // window.open(url);
+            });
+        });
+    }
+
     function split_cell_to_notebook() {
         var selected_cell = Jupyter.notebook.get_selected_cell();
-        var content_before_cursor = selected_cell.get_pre_cursor();
-        var content_after_cursor = selected_cell.get_post_cursor();
+        var selected_index = Jupyter.notebook.get_selected_index();
 
         var nb_path = Jupyter.notebook.notebook_path;
         var parent_path = utils.url_path_split(nb_path)[0];
-        
-        Jupyter.notebook.contents.copy(nb_path, parent_path).then(function(data) {
-            return Jupyter.notebook.contents.get(data.path, {type: 'notebook'})
-        }).then(function(data) {
-            Jupyter.notebook.fromJSON(data);
-            var copy_selected_cell = Jupyter.notebook.get_selected_cell();
-            copy_selected_cell.set_text(content_before_cursor);
-            console.log(copy_selected_cell.get_text());
-            return Jupyter.notebook.save_notebook();
-        }).then(function() {
-                console.log(Jupyter.notebook);
-                console.log('Notebook saved!');
-        });
 
-        Jupyter.notebook.contents.copy(nb_path, parent_path).then(function(data) {
-            return Jupyter.notebook.contents.get(data.path, {type: 'notebook'});
-        }).then(function(data) {
-            Jupyter.notebook.fromJSON(data);
-            var original_selected_cell = Jupyter.notebook.get_selected_cell();
-            original_selected_cell.set_text(content_after_cursor);
-            console.log(original_selected_cell.get_text());
-            return Jupyter.notebook.save_notebook();
-        }).then(function() {
-            console.log(Jupyter.notebook);
-            console.log('Notebook saved!');
-        });
+        var content;
+
+        // pre-cursor notebook
+        content = Jupyter.notebook.toJSON();
+        content.cells[selected_index].source = selected_cell.get_pre_cursor();
+        content.cells = content.cells.slice(0, selected_index + 1);
+        copy_and_swap_content(nb_path, parent_path, content);
+
+        // post-cursor notebook
+        content = Jupyter.notebook.toJSON();
+        content.cells[selected_index].source = selected_cell.get_post_cursor();
+        content.cells = content.cells.slice(selected_index, content.cells.length);
+        copy_and_swap_content(nb_path, parent_path, content);
     }
 
     function place_split_button() {
