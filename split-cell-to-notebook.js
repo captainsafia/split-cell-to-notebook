@@ -1,4 +1,7 @@
-define(['base/js/namespace', 'base/js/utils', 'jquery'], function(Jupyter, utils, $) {
+define(['base/js/namespace', 
+        'base/js/utils', 
+        'base/js/dialog', 
+        'jquery'], function(Jupyter, utils, dialog, $) {
 
     function copy_and_swap_content (nb_path, parent_path, content) {
         return Jupyter.notebook.contents.copy(nb_path, parent_path).then(function (data) {
@@ -9,9 +12,14 @@ define(['base/js/namespace', 'base/js/utils', 'jquery'], function(Jupyter, utils
                 var url = utils.url_path_join(
                     Jupyter.notebook.base_url, 'notebooks', utils.encode_uri_components(data.path)
                 );
-                // // maybe do something with the new url - open it, or notify user?
-                // // Nothing for now, as opening it looks like a popup
-                // window.open(url);
+                var modal_text = "The selected cell has been split into two";
+                modal_text += " notebooks. Navigate to the Dashboard to open them.";
+                var modal_content = $('<p/>').html(modal_text);
+                dialog.modal({
+                    title: 'Notebook Cell Split',
+                    body: modal_content,
+                    buttons: {'OK': {}}
+                });
             });
         });
     }
